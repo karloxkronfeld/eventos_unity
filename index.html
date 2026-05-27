@@ -1,101 +1,18 @@
-
-
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Eventos GitHub</title>
-
-<style>
-
-body{
-    font-family:Arial;
-    background:#f2f2f2;
-    padding:40px;
-}
-
-.contenedor{
-    background:white;
-    max-width:600px;
-    margin:auto;
-    padding:30px;
-    border-radius:15px;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin-bottom:20px;
-    box-sizing:border-box;
-}
-
-button{
-    width:100%;
-    padding:15px;
-    background:#2563eb;
-    color:white;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="contenedor">
-
-<h1>Nuevo Evento</h1>
-
-<input type="date" id="fecha">
-
-<input
-type="text"
-id="evento"
-placeholder="Nombre del evento">
-
-<input
-type="text"
-id="responsable"
-placeholder="Responsable">
-
-<button onclick="guardarEvento()">
-
-Guardar Evento
-
-</button>
-
-</div>
-
 <script>
 
 async function guardarEvento(){
 
-    // =========================
-    // CONFIGURACIÓN GITHUB
-    // =========================
-
     const TOKEN =
-    "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";
+    "AQUI_TU_NUEVO_TOKEN";
 
     const USUARIO =
-    "Karloxkronfeld";
+    "karloxkronfeld";
 
     const REPO =
     "eventos_unity";
 
     const ARCHIVO =
     "eventos.json";
-
-    // =========================
-    // NUEVO EVENTO
-    // =========================
 
     const nuevoEvento = {
 
@@ -110,96 +27,130 @@ async function guardarEvento(){
 
     };
 
-    // =========================
-    // LEER JSON ACTUAL
-    // =========================
-
     const url =
 
 `https://api.github.com/repos/${USUARIO}/${REPO}/contents/${ARCHIVO}`;
 
-    const respuesta = await fetch(url, {
+    try{
 
-        headers: {
+        // =========================
+        // LEER JSON
+        // =========================
 
-            Authorization:
-            `token ${TOKEN}`
+        const respuesta = await fetch(url, {
+
+            headers: {
+
+                Authorization:
+                `token ${TOKEN}`
+
+            }
+
+        });
+
+        const data = await respuesta.json();
+
+        console.log(data);
+
+        // =========================
+        // LIMPIAR BASE64
+        // =========================
+
+        const limpio =
+
+        data.content.replace(/\n/g, "");
+
+        // =========================
+        // DECODIFICAR
+        // =========================
+
+        const contenido = atob(limpio);
+
+        let eventos =
+        JSON.parse(contenido);
+
+        // =========================
+        // AGREGAR EVENTO
+        // =========================
+
+        eventos.push(nuevoEvento);
+
+        // =========================
+        // NUEVO JSON
+        // =========================
+
+        const nuevoJSON =
+
+        JSON.stringify(eventos, null, 4);
+
+        // =========================
+        // CONVERTIR A BASE64
+        // =========================
+
+        const nuevoContenido =
+
+        btoa(unescape(encodeURIComponent(nuevoJSON)));
+
+        // =========================
+        // SUBIR
+        // =========================
+
+        const actualizar = await fetch(url, {
+
+            method:"PUT",
+
+            headers:{
+
+                Authorization:
+                `token ${TOKEN}`,
+
+                "Content-Type":
+                "application/json"
+
+            },
+
+            body:JSON.stringify({
+
+                message:
+                "Nuevo evento agregado",
+
+                content:
+                nuevoContenido,
+
+                sha:
+                data.sha
+
+            })
+
+        });
+
+        const resultado =
+        await actualizar.json();
+
+        console.log(resultado);
+
+        if(actualizar.ok){
+
+            alert(
+            "Evento guardado 😄"
+            );
+
+        }else{
+
+            alert(
+            "Error guardando"
+            );
+
+            console.log(resultado);
 
         }
 
-    });
+    }catch(error){
 
-    const data = await respuesta.json();
+        console.log(error);
 
-    // =========================
-    // DECODIFICAR JSON
-    // =========================
-
-    const contenido =
-    atob(data.content);
-
-    let eventos =
-    JSON.parse(contenido);
-
-    // =========================
-    // AGREGAR EVENTO
-    // =========================
-
-    eventos.push(nuevoEvento);
-
-    // =========================
-    // CONVERTIR A BASE64
-    // =========================
-
-    const nuevoContenido =
-
-    btoa(
-        JSON.stringify(eventos, null, 4)
-    );
-
-    // =========================
-    // SUBIR NUEVO JSON
-    // =========================
-
-    const actualizar = await fetch(url, {
-
-        method:"PUT",
-
-        headers:{
-
-            Authorization:
-            `token ${TOKEN}`,
-
-            "Content-Type":
-            "application/json"
-
-        },
-
-        body:JSON.stringify({
-
-            message:
-            "Nuevo evento agregado",
-
-            content:
-            nuevoContenido,
-
-            sha:
-            data.sha
-
-        })
-
-    });
-
-    if(actualizar.ok){
-
-        alert("Evento guardado en GitHub 😄");
-
-    }else{
-
-        alert("Error");
-
-        console.log(
-            await actualizar.text()
+        alert(
+        "Error en consola"
         );
 
     }
@@ -207,7 +158,3 @@ async function guardarEvento(){
 }
 
 </script>
-
-</body>
-
-</html>
