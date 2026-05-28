@@ -13,5 +13,10 @@
         "fecha": "2026-01-03",
         "evento": "qwert",
         "responsable": "porfin"
+    },
+    {
+        "fecha": "2026-05-05",
+        "evento": "conferencia",
+        "responsable": "carlos"
     }
 ]
