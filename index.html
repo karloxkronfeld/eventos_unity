@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Eventos GitHub</title>
+<title>Eventos Firebase</title>
 
 <style>
 
@@ -73,21 +73,64 @@ Guardar Evento
 
 </div>
 
-<script>
+<script type="module">
 
-async function guardarEvento(){
+// ==========================
+// FIREBASE
+// ==========================
 
-    const TOKEN =
-    "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";
+import { initializeApp }
 
-    const USUARIO =
-    "karloxkronfeld";
+from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 
-    const REPO =
-    "eventos_unity";
+import {
 
-    const ARCHIVO =
-    "eventos.json";
+getFirestore,
+collection,
+addDoc
+
+}
+
+from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+// ==========================
+// CONFIG
+// ==========================
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyAisgbYj_b8aIsfSy1oxTRnKfy3RIxuG3Q",
+
+  authDomain: "eventos-unity.firebaseapp.com",
+
+  projectId: "eventos-unity",
+
+  storageBucket: "eventos-unity.firebasestorage.app",
+
+  messagingSenderId: "965083017990",
+
+  appId: "1:965083017990:web:2fc275b9110023dab3a487",
+
+  measurementId: "G-KQ0Y5CEPHW"
+
+};
+
+// ==========================
+// INIT
+// ==========================
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+// ==========================
+// GUARDAR EVENTO
+// ==========================
+
+window.guardarEvento =
+async function(){
 
     const nuevoEvento = {
 
@@ -102,106 +145,26 @@ async function guardarEvento(){
 
     };
 
-    const url =
-
-`https://api.github.com/repos/${USUARIO}/${REPO}/contents/${ARCHIVO}`;
-
     try{
 
-        const respuesta = await fetch(url, {
+        await addDoc(
 
-            headers: {
+            collection(db, "eventos"),
 
-                Authorization:
-                `token ${TOKEN}`
+            nuevoEvento
 
-            }
-
-        });
-
-        const data = await respuesta.json();
-
-        console.log(data);
-
-        const limpio =
-        data.content.replace(/\n/g, "");
-
-        const contenido =
-        atob(limpio);
-
-        let eventos =
-        JSON.parse(contenido);
-
-        eventos.push(nuevoEvento);
-
-        const nuevoJSON =
-
-        JSON.stringify(eventos, null, 4);
-
-        const nuevoContenido =
-
-        btoa(
-            unescape(
-                encodeURIComponent(nuevoJSON)
-            )
         );
 
-        const actualizar = await fetch(url, {
-
-            method:"PUT",
-
-            headers:{
-
-                Authorization:
-                `token ${TOKEN}`,
-
-                "Content-Type":
-                "application/json"
-
-            },
-
-            body:JSON.stringify({
-
-                message:
-                "Nuevo evento agregado",
-
-                content:
-                nuevoContenido,
-
-                sha:
-                data.sha
-
-            })
-
-        });
-
-        const resultado =
-        await actualizar.json();
-
-        console.log(resultado);
-
-        if(actualizar.ok){
-
-            alert(
-            "Evento guardado 😄"
-            );
-
-        }else{
-
-            alert(
-            "Error guardando"
-            );
-
-            console.log(resultado);
-
-        }
+        alert(
+        "Evento guardado 😄"
+        );
 
     }catch(error){
 
         console.log(error);
 
         alert(
-        "Error en consola"
+        "Error guardando"
         );
 
     }
