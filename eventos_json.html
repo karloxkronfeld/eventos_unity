@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Eventos JSON</title>
+</head>
+<body>
+
+<pre id="json"></pre>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyAisgbYj_b8aIsfSy1oxTRnKfy3RIxuG3Q",
+
+  authDomain: "eventos-unity.firebaseapp.com",
+
+  projectId: "eventos-unity",
+
+  storageBucket: "eventos-unity.firebasestorage.app",
+
+  messagingSenderId: "965083017990",
+
+  appId: "1:965083017990:web:2fc275b9110023dab3a487",
+
+  measurementId: "G-KQ0Y5CEPHW"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function cargarEventos()
+{
+    const snapshot =
+    await getDocs(collection(db,"eventos"));
+
+    let eventos = [];
+
+    snapshot.forEach(doc =>
+    {
+        eventos.push(doc.data());
+    });
+
+    document.getElementById("json").textContent =
+    JSON.stringify(eventos,null,4);
+}
+
+cargarEventos();
+
+</script>
+
+</body>
+</html>
