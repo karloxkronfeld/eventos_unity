@@ -51,7 +51,7 @@ button{
 
 <div class="contenedor">
 
-<h1>Nuevo Evento12345678901234567890</h1>
+<h1>Nuevo Evento</h1>
 
 <input type="date" id="fecha">
 
@@ -65,6 +65,11 @@ type="text"
 id="responsable"
 placeholder="Responsable">
 
+<input
+type="text"
+id="lugar"
+placeholder="Lugar">
+
 <button onclick="guardarEvento()">
 
 Guardar Evento
@@ -75,27 +80,15 @@ Guardar Evento
 
 <script type="module">
 
-// ==========================
-// FIREBASE
-// ==========================
-
 import { initializeApp }
-
 from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 
 import {
-
 getFirestore,
 collection,
 addDoc
-
 }
-
 from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-// ==========================
-// CONFIG
-// ==========================
 
 const firebaseConfig = {
 
@@ -115,19 +108,11 @@ const firebaseConfig = {
 
 };
 
-// ==========================
-// INIT
-// ==========================
-
 const app =
 initializeApp(firebaseConfig);
 
 const db =
 getFirestore(app);
-
-// ==========================
-// GUARDAR EVENTO
-// ==========================
 
 window.guardarEvento =
 async function(){
@@ -141,7 +126,10 @@ async function(){
         document.getElementById("evento").value,
 
         responsable:
-        document.getElementById("responsable").value
+        document.getElementById("responsable").value,
+
+        lugar:
+        document.getElementById("lugar").value
 
     };
 
@@ -159,6 +147,11 @@ async function(){
         "Evento guardado 😄"
         );
 
+        document.getElementById("fecha").value = "";
+        document.getElementById("evento").value = "";
+        document.getElementById("responsable").value = "";
+        document.getElementById("lugar").value = "";
+
     }catch(error){
 
         console.log(error);
@@ -174,5 +167,4 @@ async function(){
 </script>
 
 </body>
-
 </html>
